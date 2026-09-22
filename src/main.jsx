@@ -93,12 +93,29 @@ function usePageMotion() {
 }
 
 function Video({ src, className = '', priority = false }) {
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return undefined
+
+    video.defaultMuted = true
+    video.muted = true
+    const playback = video.play()
+
+    playback?.catch(() => {})
+
+    return () => video.pause()
+  }, [src])
+
   return (
     <video
+      ref={videoRef}
       className={className}
       src={src}
       autoPlay
       muted
+      defaultMuted
       loop
       playsInline
       preload={priority ? 'auto' : 'metadata'}
